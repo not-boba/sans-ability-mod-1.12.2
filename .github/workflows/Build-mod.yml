@@ -1,12 +1,34 @@
-FAILURE: Build failed with an exception.
+name: Build Mod
 
-* What went wrong:
-Task 'jar' not found in root project 'sans-ability-mod-1.12.2'.
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
 
-* Try:
-Run gradle tasks to get a list of available tasks. Run with --stacktrace option to get the stack trace. Run with --info or --debug option to get more log output. Run with --scan to get full insights.
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-* Get more help at https://help.gradle.org
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-BUILD FAILED in 5s
-Error: Process completed with exit code 1.
+      - name: Set up JDK 8
+        uses: setup-java@v4
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '4.10.3'
+
+      - name: Build Project
+        run: gradle build --no-daemon
+
+      - name: Upload Mod Jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: sans-mod-jar
+          path: '**/build/libs/*.jar'
