@@ -25,10 +25,10 @@ jobs:
           gradle-version: '4.10.3'
 
       - name: Build Project
-        run: gradle build --no-daemon
+        run: gradle build jar --no-daemon
 
       - name: Upload Mod Jar
         uses: actions/upload-artifact@v4
         with:
           name: sans-mod-jar
-          path: build/libs/*.jar
+          path: '**/*.jar'
