@@ -19,10 +19,10 @@ jobs:
           java-version: '8'
           distribution: 'temurin'
 
-      - name: Build with Gradle
+      - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
-          gradle-version: wrapper
+          gradle-version: '4.10.3'
 
       - name: Build Project
         run: gradle build --no-daemon
