@@ -20,9 +20,10 @@ compileJava {
 }
 
 minecraft {
-    version = "1.12.2-14.23.5.2859"
+    version = "1.12.2-14.23.5.2847"
     runDir = "run"
-    mappings = "snapshot_20171003"
+    mappings = "stable_39"
+    makeObfSourceJar = false
 }
 
 dependencies {
