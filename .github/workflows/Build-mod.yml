@@ -27,8 +27,13 @@ jobs:
       - name: Build Project
         run: gradle build --no-daemon
 
+      - name: List generated files
+        run: find . -name "*.jar"
+
       - name: Upload Mod Jar
         uses: actions/upload-artifact@v4
         with:
           name: sans-mod-jar
-          path: '**/build/libs/*.jar'
+          path: |
+            build/libs/*.jar
+            **/build/libs/*.jar
