@@ -1,34 +1,48 @@
-name: Build Mod
+buildscript {
+    repositories {
+        maven { url = 'https://maven.minecraftforge.net/' }
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+    }
+}
 
-on:
-  push:
-    branches: [ main, master ]
-  workflow_dispatch:
+apply plugin: 'net.minecraftforge.gradle.forge'
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+version = '1.0'
+group = 'com.sansmod'
+archivesBaseName = 'sans-ability-mod'
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+sourceCompatibility = targetCompatibility = '1.8'
+compileJava {
+    sourceCompatibility = targetCompatibility = '1.8'
+}
 
-      - name: Set up JDK 8
-        uses: actions/setup-java@v4
-        with:
-          java-version: '8'
-          distribution: 'temurin'
+repositories {
+    maven { url = 'https://maven.minecraftforge.net/' }
+    maven { url = 'https://libraries.minecraft.net/' }
+    mavenCentral()
+}
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-version: '4.10.3'
+minecraft {
+    version = "1.12.2-14.23.5.2859"
+    runDir = "run"
+    mappings = "stable_39"
+    makeObfSourceJar = false
+}
 
-      - name: Build Project
-        run: gradle build --no-daemon
+processResources {
+    inputs.property 'version', project.version
+    inputs.property 'mcversion', project.minecraft.version
 
-      - name: Upload Mod Jar
-        uses: actions/upload-artifact@v4
-        with:
-          name: sans-mod-jar
-          path: build/libs/*.jar
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+        expand 'version': project.version, 'mcversion': project.minecraft.version
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
