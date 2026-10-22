@@ -17,8 +17,8 @@ public class ItemSharpBone extends ItemSword {
 
     public ItemSharpBone() {
         super(BONE_MATERIAL);
-        this.setUnlocalizedName("sharp_bone");
         this.setRegistryName("sharp_bone");
+        this.setUnlocalizedName("sansmod.sharp_bone");
         this.setCreativeTab(CreativeTabs.COMBAT);
     }
 }
