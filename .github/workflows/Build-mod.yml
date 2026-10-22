@@ -24,6 +24,9 @@ jobs:
         with:
           gradle-version: '4.10.3'
 
+      - name: Build with Gradle
+  run: ./gradlew clean build --no-daemon
+
       - name: Build Project
         run: gradle clean build --no-daemon
 
