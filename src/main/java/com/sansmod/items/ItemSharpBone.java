@@ -15,17 +15,16 @@ public class ItemSharpBone extends ItemSword {
         0,     
         8.0F,  
         0.0F,  
-        0      // 0 зачаровываемости (предмет нельзя зачаровать)
+        0      
     );
 
     public ItemSharpBone() {
         super(BONE_MATERIAL);
-        setUnlocalizedName("sharp_bone");
-        setRegistryName("sharp_bone");
-        setCreativeTab(CreativeTabs.COMBAT);
+        this.setUnlocalizedName("sharp_bone");
+        this.setRegistryName("sharp_bone");
+        this.setCreativeTab(CreativeTabs.COMBAT);
     }
 
-    // Запрещаем зачарования на уровне предмета (дополнительная гарантия)
     @Override
     public int getItemEnchantability() {
         return 0;
@@ -38,11 +37,9 @@ public class ItemSharpBone extends ItemSword {
         if (equipmentSlot == EntityEquipmentSlot.MAINHAND) {
             multimap.clear();
             
-            // Урон: 1
             multimap.put(net.minecraft.entity.SharedMonsterAttributes.ATTACK_DAMAGE.getName(), 
                 new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Weapon modifier", 0.0D, 0));
             
-            // Скорость атаки: 5.0 (очень быстро)
             multimap.put(net.minecraft.entity.SharedMonsterAttributes.ATTACK_SPEED.getName(), 
                 new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon modifier", 5.0D, 0));
         }
