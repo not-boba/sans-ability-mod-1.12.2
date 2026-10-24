@@ -35,8 +35,8 @@ public class PacketTelekinesis implements IMessage {
     public static class Handler implements IMessageHandler<PacketTelekinesis, IMessage> {
         @Override
         public IMessage onMessage(PacketTelekinesis message, MessageContext ctx) {
-            // Исправлено получение игрока на сервере Forge 1.12.2
-            EntityPlayerMP player = ctx.getServerHandler().playerEntity;
+            // Точное поле игрока для MCP-маппингов 1.12.2: ctx.getServerHandler().player
+            EntityPlayerMP player = ctx.getServerHandler().player;
             player.getServerWorld().addScheduledTask(() -> {
                 Entity target = player.getServerWorld().getEntityByID(message.targetId);
                 if (target instanceof EntityLivingBase && player.getDistanceSq(target) <= 900.0D) {
