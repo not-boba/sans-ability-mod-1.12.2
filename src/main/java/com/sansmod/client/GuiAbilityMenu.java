@@ -70,7 +70,7 @@ public class GuiAbilityMenu extends GuiScreen {
     }
 
     @Override
-    boolean doesGuiPauseGame() {
+    public boolean doesGuiPauseGame() {
         return false;
     }
 }
