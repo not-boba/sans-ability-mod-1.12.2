@@ -1,1 +1,6 @@
-: item.sharp_bone.name=Sharp Bone
+item.sansmod.sharp_bone.name=Острая кость
+key.categories.sansmod=Мод Способностей Санса
+key.sansmod.switch=Сменить способность
+key.sansmod.use=Использовать способность
+key.sansmod.telekinesis=Телекинез
+effect.sansmod.karma=Карма (KR)
