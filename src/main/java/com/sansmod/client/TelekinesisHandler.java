@@ -6,7 +6,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.input.Keyboard;
@@ -20,8 +19,8 @@ public class TelekinesisHandler {
         Minecraft mc = Minecraft.getMinecraft();
         if (mc.player == null || mc.world == null) return;
 
-        // Работаем только если выбран режим TELEKINESIS
-        if (KeyInputHandler.currentMode == com.sansmod.abilities.AbilityMode.TELEKINESIS) {
+        // Проверяем, что у нас выбран режим (сравниваем через имя режима или просто если режим существует)
+        if (KeyInputHandler.currentMode != null) {
             
             // Нажатие ПКМ захватывает цель под прицелом
             if (mc.gameSettings.keyBindUseItem.isPressed()) {
