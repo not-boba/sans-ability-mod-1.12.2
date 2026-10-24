@@ -2,7 +2,7 @@
 	"format_version": "1.9.0",
 	"credit": "Made with Blockbench",
 	"textures": {
-		"2": "block/bones"
+		"2": "sansmod:items/sharp_bone"
 	},
 	"elements": [
 		{
