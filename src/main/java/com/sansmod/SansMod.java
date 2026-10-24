@@ -25,6 +25,13 @@ public class SansMod {
     @EventHandler
     public void init(FMLInitializationEvent event) {
         System.out.println("[SansMod] Initialized successfully!");
+        
+        // Регистрация клиентских обработчиков управления (TAB, X, C + W/S)
+        if (event.getSide().isClient()) {
+            com.sansmod.client.KeyInputHandler.register();
+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(new com.sansmod.client.KeyInputHandler());
+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(new com.sansmod.client.TelekinesisHandler());
+        }
     }
 
     @SubscribeEvent
