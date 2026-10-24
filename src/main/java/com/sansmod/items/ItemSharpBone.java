@@ -1,18 +1,21 @@
 package com.sansmod.items;
 
 import com.google.common.collect.Multimap;
+import com.sansmod.effects.EffectKarma;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
+import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraftforge.common.util.EnumHelper;
 
 public class ItemSharpBone extends ItemSword {
+
+    public static final Potion KARMA = new EffectKarma();
 
     public static final ToolMaterial BONE_MATERIAL = EnumHelper.addToolMaterial(
         "SANS_BONE", 
@@ -35,12 +38,10 @@ public class ItemSharpBone extends ItemSword {
         return 0;
     }
 
-    // Эффект Кармы при ударе противника
+    // Накладываем кастомную Карму Санса на 4 секунды при каждом ударе!
     @Override
     public boolean hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker) {
-        // Накладываем эффект отравления (эмуляция Кармы): длительность 3 секунды (60 тиков), сила 1
-        // В будущем здесь можно будет заменить MobEffects.POISON на наш кастомный эффект KR
-        target.addPotionEffect(new PotionEffect(MobEffects.POISON, 60, 1));
+        target.addPotionEffect(new PotionEffect(KARMA, 80, 0));
         return super.hitEntity(stack, target, attacker);
     }
 
@@ -51,11 +52,11 @@ public class ItemSharpBone extends ItemSword {
         if (equipmentSlot == EntityEquipmentSlot.MAINHAND) {
             multimap.clear();
             
-            // Урон = 1 (остается минимальным, всю работу делает «Карма»)
+            // Урон = 1
             multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), 
                 new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Weapon modifier", 0.0D, 0));
             
-            // Скорость атаки = 5.0 (молниеносные удары Санса)
+            // Скорость атаки = 5.0 (очень быстро)
             multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), 
                 new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon modifier", 5.0D, 0));
         }
