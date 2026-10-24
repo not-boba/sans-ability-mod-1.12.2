@@ -9,7 +9,7 @@ import org.lwjgl.input.Keyboard;
 
 public class GuiAbilityMenu extends GuiScreen {
 
-    private static final ResourceLocation MENU_TEXTURE = new ResourceLocation("sansmod", "textures/gui/telekinesis.png");
+    private static final ResourceLocation MENU_TEXTURE = new ResourceLocation("sansmod", "textures/gui/telecinesis.png");
     private static final ResourceLocation PROJECTILE_TEXTURE = new ResourceLocation("sansmod", "textures/gui/projectile.png");
 
     private final int imageWidth = 128;
