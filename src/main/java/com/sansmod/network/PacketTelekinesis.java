@@ -11,7 +11,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class PacketTelekinesis implements IMessage {
     private int targetId;
-    private boolean push; // true = W (оттолкнуть), false = S (притянуть)
+    private boolean push;
 
     public PacketTelekinesis() {}
 
@@ -35,10 +35,11 @@ public class PacketTelekinesis implements IMessage {
     public static class Handler implements IMessageHandler<PacketTelekinesis, IMessage> {
         @Override
         public IMessage onMessage(PacketTelekinesis message, MessageContext ctx) {
-            EntityPlayerMP player = ctx.getServerPlayer();
+            // Исправлено получение игрока на сервере Forge 1.12.2
+            EntityPlayerMP player = ctx.getServerHandler().playerEntity;
             player.getServerWorld().addScheduledTask(() -> {
                 Entity target = player.getServerWorld().getEntityByID(message.targetId);
-                if (target instanceof EntityLivingBase && player.getDistanceSq(target) <= 30.0D) {
+                if (target instanceof EntityLivingBase && player.getDistanceSq(target) <= 900.0D) {
                     Vec3d look = player.getLookVec();
                     double mult = message.push ? 1.5D : -1.5D;
 
