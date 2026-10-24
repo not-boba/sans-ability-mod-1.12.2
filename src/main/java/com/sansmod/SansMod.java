@@ -1,6 +1,7 @@
 package com.sansmod;
 
 import com.sansmod.items.ItemSharpBone;
+import com.sansmod.network.PacketHandler;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -26,6 +27,10 @@ public class SansMod {
     public void init(FMLInitializationEvent event) {
         System.out.println("[SansMod] Initialized successfully!");
 
+        // Регистрация сетевых пакетов (телекинез и т.д.)
+        PacketHandler.registerMessages();
+
+        // Регистрация клиентских обработчиков и интерфейсов
         if (event.getSide().isClient()) {
             com.sansmod.client.KeyInputHandler.register();
             net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(new com.sansmod.client.KeyInputHandler());
