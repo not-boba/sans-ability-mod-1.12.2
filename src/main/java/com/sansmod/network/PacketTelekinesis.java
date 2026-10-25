@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -42,16 +43,20 @@ public class PacketTelekinesis implements IMessage {
                 Entity target = player.getServerWorld().getEntityByID(message.targetId);
                 if (target instanceof EntityLivingBase && player.getDistanceSq(target) <= 900.0D) {
                     Vec3d look = player.getLookVec();
-                    // Увеличим множитель, чтобы толчок был заметным
-                    double mult = message.push ? 0.8D : -0.8D;
+                    double mult = message.push ? 0.6D : -0.6D;
 
-                    // Устанавливаем скорости
-                    target.motionX = look.x * mult;
-                    target.motionY = 0.4D; // Немного подкидываем вверх для красоты
-                    target.motionZ = look.z * mult;
+                    // Используем addVelocity — он корректно суммирует импульс
+                    target.addVelocity(look.x * mult, 0.35D, look.z * mult);
 
                     target.isAirBorne = true;
                     target.velocityChanged = true;
+
+                    // КРИТИЧЕСКИ ВАЖНО: Принудительно отправляем клиентам пакет изменения скорости сущности,
+                    // чтобы сервер сообщил клиенту: "эй, этот моб полетел!"
+                    player.getServerWorld().getMinecraftServer().getPlayerList()
+                            .sendToAllNearExcept(player, target.posX, target.posY, target.posZ, 64.0D, 
+                                    player.getServerWorld().provider.getDimension(), 
+                                    new SPacketEntityVelocity(target));
                 }
             });
             return null;
