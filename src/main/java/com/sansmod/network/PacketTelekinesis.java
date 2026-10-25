@@ -35,17 +35,21 @@ public class PacketTelekinesis implements IMessage {
     public static class Handler implements IMessageHandler<PacketTelekinesis, IMessage> {
         @Override
         public IMessage onMessage(PacketTelekinesis message, MessageContext ctx) {
-            // Точное поле игрока для MCP-маппингов 1.12.2: ctx.getServerHandler().player
             EntityPlayerMP player = ctx.getServerHandler().player;
+            if (player == null) return null;
+
             player.getServerWorld().addScheduledTask(() -> {
                 Entity target = player.getServerWorld().getEntityByID(message.targetId);
                 if (target instanceof EntityLivingBase && player.getDistanceSq(target) <= 900.0D) {
                     Vec3d look = player.getLookVec();
-                    double mult = message.push ? 1.5D : -1.5D;
+                    // Увеличим множитель, чтобы толчок был заметным
+                    double mult = message.push ? 0.8D : -0.8D;
 
+                    // Устанавливаем скорости
                     target.motionX = look.x * mult;
-                    target.motionY = look.y * mult + 0.3D;
+                    target.motionY = 0.4D; // Немного подкидываем вверх для красоты
                     target.motionZ = look.z * mult;
+
                     target.isAirBorne = true;
                     target.velocityChanged = true;
                 }
