@@ -8,7 +8,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
 public class TelekinesisHandler {
     private static Entity lockedTarget = null;
@@ -19,36 +19,39 @@ public class TelekinesisHandler {
         Minecraft mc = Minecraft.getMinecraft();
         if (mc.player == null || mc.world == null) return;
 
-        // Если цель умерла или далеко — сбрасываем захват
+        // Если цель умерла или отбежала слишком далеко — сбрасываем захват
         if (lockedTarget != null && (!lockedTarget.isEntityAlive() || mc.player.getDistanceSq(lockedTarget) > 900.0D)) {
             lockedTarget = null;
         }
     }
 
-    // Ловим нажатия мыши и клавиатуры четко по событиям ввода
     @SubscribeEvent
-    public static void onKeyInput(InputEvent.KeyInputEvent event) {
+    public static void onMouseInput(InputEvent.MouseInputEvent event) {
         Minecraft mc = Minecraft.getMinecraft();
         if (mc.player == null || mc.world == null) return;
 
-        // Захват цели на ПКМ (если зажата или нажата)
-        if (mc.gameSettings.keyBindUseItem.isKeyDown()) {
+        // Кнопка 1 — это ПКМ (Правая кнопка мыши) для захвата цели
+        if (Mouse.isButtonDown(1)) {
             RayTraceResult ray = mc.objectMouseOver;
             if (ray != null && ray.typeOfHit == RayTraceResult.Type.ENTITY) {
                 lockedTarget = ray.entityHit;
+                System.out.println("[SansMod] Target locked: " + lockedTarget.getName());
             }
         }
 
-        // Если цель захвачена, управляем ей через W (толкнуть) и S (притянуть)
+        // Если цель уже захвачена, управляем ей через мышь:
         if (lockedTarget != null && lockedTarget.isEntityAlive()) {
-            // Клавиша W (вперед) - толкаем от себя
-            if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-                PacketHandler.INSTANCE.sendToServer(new PacketTelekinesis(lockedTarget.getEntityId(), true));
-            }
-            // Клавиша S (назад) - притягиваем к себе
-            else if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
+            // ПКМ зажата (кнопка 1) — притягиваем к себе (push = false)
+            if (Mouse.isButtonDown(1)) {
                 PacketHandler.INSTANCE.sendToServer(new PacketTelekinesis(lockedTarget.getEntityId(), false));
             }
+            // ЛКМ зажата (кнопка 0) — отталкиваем от себя (push = true)
+            else if (Mouse.isButtonDown(0)) {
+                PacketHandler.INSTANCE.sendToServer(new PacketTelekinesis(lockedTarget.getEntityId(), true));
+            }
         }
+        
+        // Если отпустили все кнопки мыши, но цель была — можно сбросить по желанию, 
+        // но пока держим захват, пока не нажмем ПКМ на воздух или другую цель.
     }
 }
