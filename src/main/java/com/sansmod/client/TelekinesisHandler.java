@@ -5,8 +5,8 @@ import com.sansmod.network.PacketTelekinesis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.input.Keyboard;
 
@@ -19,36 +19,36 @@ public class TelekinesisHandler {
         Minecraft mc = Minecraft.getMinecraft();
         if (mc.player == null || mc.world == null) return;
 
-        // Проверяем, что у нас выбран режим (сравниваем через имя режима или просто если режим существует)
-        if (KeyInputHandler.currentMode != null) {
-            
-            // Нажатие ПКМ захватывает цель под прицелом
-            if (mc.gameSettings.keyBindUseItem.isPressed()) {
-                RayTraceResult ray = mc.objectMouseOver;
-                if (ray != null && ray.typeOfHit == RayTraceResult.Type.ENTITY) {
-                    lockedTarget = ray.entityHit;
-                } else {
-                    lockedTarget = null;
-                }
-            }
-
-            // Если целимся в моба, считываем W (толкнуть) и S (притянуть)
-            if (lockedTarget != null && lockedTarget.isEntityAlive()) {
-                boolean isWPressed = Keyboard.isKeyDown(mc.gameSettings.keyBindForward.getKeyCode());
-                boolean isSPressed = Keyboard.isKeyDown(mc.gameSettings.keyBindBack.getKeyCode());
-
-                if (isWPressed) {
-                    // Отправляем пакет на сервер: толкнуть вперед
-                    PacketHandler.INSTANCE.sendToServer(new PacketTelekinesis(lockedTarget.getEntityId(), true));
-                } else if (isSPressed) {
-                    // Отправляем пакет на сервер: притянуть назад
-                    PacketHandler.INSTANCE.sendToServer(new PacketTelekinesis(lockedTarget.getEntityId(), false));
-                }
-            } else {
-                lockedTarget = null;
-            }
-        } else {
+        // Если цель умерла или далеко — сбрасываем захват
+        if (lockedTarget != null && (!lockedTarget.isEntityAlive() || mc.player.getDistanceSq(lockedTarget) > 900.0D)) {
             lockedTarget = null;
+        }
+    }
+
+    // Ловим нажатия мыши и клавиатуры четко по событиям ввода
+    @SubscribeEvent
+    public static void onKeyInput(InputEvent.KeyInputEvent event) {
+        Minecraft mc = Minecraft.getMinecraft();
+        if (mc.player == null || mc.world == null) return;
+
+        // Захват цели на ПКМ (если зажата или нажата)
+        if (mc.gameSettings.keyBindUseItem.isKeyDown()) {
+            RayTraceResult ray = mc.objectMouseOver;
+            if (ray != null && ray.typeOfHit == RayTraceResult.Type.ENTITY) {
+                lockedTarget = ray.entityHit;
+            }
+        }
+
+        // Если цель захвачена, управляем ей через W (толкнуть) и S (притянуть)
+        if (lockedTarget != null && lockedTarget.isEntityAlive()) {
+            // Клавиша W (вперед) - толкаем от себя
+            if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
+                PacketHandler.INSTANCE.sendToServer(new PacketTelekinesis(lockedTarget.getEntityId(), true));
+            }
+            // Клавиша S (назад) - притягиваем к себе
+            else if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
+                PacketHandler.INSTANCE.sendToServer(new PacketTelekinesis(lockedTarget.getEntityId(), false));
+            }
         }
     }
 }
